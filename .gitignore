@@ -4,7 +4,9 @@ __pycache__/
 .mypy_cache/
 .ruff_cache/
 curobo/
-data/
+data/*
+!data/20250804_105719_demo_0_645/
+!data/20250804_105719_demo_0_645/**
 .env
 .env.*
 !.env.example
