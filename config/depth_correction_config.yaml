@@ -1,0 +1,54 @@
+depth_correction:
+
+  # --- Input files ---
+  depth_real_file: outputs/20250804_105719/depth/left/VDA/000010.png
+  depth_sim_file:  outputs/20250804_105719/depth/left/png/000010.png
+  mask_files:
+    - outputs/20250804_105719/yellow_rubber_duck/masks/000010.png
+    - outputs/20250804_105719/purple_bowl/masks/000010.png
+
+  # --- Output directory (data ID is appended automatically: output_dir/DATA_ID/depth_correction) ---
+  output_dir: outputs
+
+  # --- Units ---
+  mm_to_m: 1000.0          # both depth PNGs are stored in millimetres (uint16)
+
+  # --- Foreground filtering ---
+  background_threshold_m: 1.2    # sim pixels at or above this distance are treated as background
+  mask_safety_margin_px:  10     # pixels added to each side of the object-mask bounding box (excludes noisy edge pixels)
+  exclude_right_quarter: false   # experimental: exlude robot related pixels; transform still applied to full image
+
+  # --- Method selection ---
+  run_linear: true
+  run_rbf:    false
+
+  # --- RBF settings ---
+  rbf_max_samples: 8000          # max training points (random subsample if exceeded)
+  rbf_kernel:      thin_plate_spline
+  rbf_smoothing:   0.001         # regularisation; larger = smoother but less accurate
+
+  # --- Visualisation settings ---
+  cmap_depth:    plasma
+  cmap_residual: RdBu_r
+  residual_vmax_m: 0.15          # colour scale half-range for residual maps (metres)
+
+  # --- Save options ---
+
+  save_foreground_mask_real: true   # save per-source valid-pixel mask for the real depth
+  save_foreground_mask_sim:  true   # save per-source valid-pixel mask for the sim depth
+  save_foreground_mask_fused: true  # save the combined foreground mask used for training
+
+
+apply:
+
+  # path to transform_params.json produced by depth_correction_fit.py
+  transform_params_file: outputs/20250804_105719/depth_correction_excl_right_quarter/transform_params.json
+
+  # directory of real depth PNGs to correct (all *.png files are processed)
+  input_dir:  outputs/20250804_105719/depth/left/VDA
+
+  # where corrected PNGs are saved (created if absent)
+  output_dir: outputs/20250804_105719/depth/left/corrected
+
+  # which fitted transform to use: linear | rbf
+  method: linear

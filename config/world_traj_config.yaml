@@ -1,0 +1,92 @@
+scene_path: scenes/scene.usd
+manipulation_id: "20250804_113012"
+data_path: data\{manipulation_id}\{h5_id}.h5
+
+robot:
+  franka_right_path: /World/fer_orcahand_right_extended
+  franka_left_path: /World/fer_orcahand_left_extended
+  ee_frame_name: fer_link8
+  ee_usd_prim_name: fer_link8
+  ee_flange_to_eef_offset: [0.13, 0.0, 0.07]
+  T_cam_left_world:     # unused by WorldTrajectorySimulator — trajectories are already world-space
+    - [1.0, 0.0, 0.0, 0.0]
+    - [0.0, 1.0, 0.0, 0.0]
+    - [0.0, 0.0, 1.0, 0.0]
+    - [0.0, 0.0, 0.0, 1.0]
+  T_cam_right_world:
+    - [1.0, 0.0, 0.0, 0.0]
+    - [0.0, 1.0, 0.0, 0.0]
+    - [0.0, 0.0, 1.0, 0.0]
+    - [0.0, 0.0, 0.0, 1.0]
+
+sim:
+  enable_right: null
+  enable_left: null
+  headless: false
+  set_joints: true
+  control_hz: 50
+  camera_eye: [1.97035, 0.00915, 1.58108]
+  camera_target: [0.51, 0.0, 1.23]
+  collision_tracking: false
+  desk_prim_paths: ["/World/table_left", "/World/table_right"]
+
+  object_replay: true
+  object_scale: 1           # world-space trajectories are already in metres
+  object_cam: left          # unused — WorldTrajectorySimulator skips T_cam_world
+
+  # all grasp/anchor/alignment features are disabled:
+  # trajectories from object_trajectory/ are already complete world-space poses
+  object_grasp_attach: false
+  object_grasp_anchor: false
+  object_initial_surface_align: false
+  object_disable_hand_collision: false
+  object_release_container_align: false
+
+  objects:
+    - usd_path: assets/objects/yellow_rubber_duck.obj
+      trajectory_npy: data\{manipulation_id}\object_trajectory\yellow_rubber_duck.npy
+      grasp_eef_side: right
+      grasp_eef_offset: [0.0, 0.0, 0.0]
+    - usd_path: assets/objects/purple_bowl.obj
+      trajectory_npy: data\{manipulation_id}\object_trajectory\purple_bowl.npy
+      grasp_eef_side: right
+      grasp_eef_offset: [0.0, 0.0, 0.0]
+
+vis:
+  enabled: false
+  show_eef: false
+  show_offset: false
+  video_mode: true
+
+log:
+  file_enabled: false
+  file_level: DEBUG
+  console_level: INFO
+
+seg:
+  enabled: false
+  output_dir: data/segmentation
+  save_rate: 100
+  mask_png: false
+  mask_npy: false
+  rgb_png: false
+
+rec:
+  enabled: false
+  output_dir: "outputs/"
+  cameras: ["left"]
+  fps: 30
+  start_frame: 0
+  end_frame: null
+  resolution: [640, 480]
+  rgb_mp4: false
+  depth_npy: false
+  depth_png: false
+  eef_pos_npy: false
+  eef_pos_mp4: false
+
+object_trajectory:
+  enabled: false
+  output_dir: "data/"
+  start_frame: 0
+  end_frame: null

@@ -1,0 +1,98 @@
+scene_path: scenes/scene.usd
+#manipulation_id: "20250804_105355"
+manipulation_id: "20250804_105719_demo_0_645"
+data_path: data\{manipulation_id}\20250804_105719.h5
+
+robot:
+  franka_right_path: /World/fer_orcahand_right_extended
+  franka_left_path: /World/fer_orcahand_left_extended
+  ee_frame_name: fer_link8          # frame name in the FER Orca-extended URDF, used by LulaKinematicsSolver
+  ee_usd_prim_name: fer_link8      # prim name in the USD scene (orca-hand robot uses fer_ prefix)
+  ee_flange_to_eef_offset: [0.13, 0.0, 0.07]  # TODO: update to exact measured flange→orca-wrist offset
+  T_cam_left_world:     # Aria - table-line rig refine
+    - [-0.02360974, -0.77621926, +0.63002083, -0.09175345]
+    - [-0.99962975, +0.02685592, -0.00437274, +0.06468071]
+    - [-0.01352558, -0.62989080, -0.77656592, +1.20979275]
+    - [ 0.0,         0.0,         0.0,         1.0        ]
+  T_cam_right_world:    # OAK-D - table-line rig refine
+    - [-0.04130591, -0.91402818, +0.40354220, +0.04645422]
+    - [-0.99914616, +0.03743202, -0.01748696, -0.02452159]
+    - [+0.00087817, -0.40391996, -0.91479391, +1.41229473]
+    - [ 0.0,         0.0,         0.0,         1.0        ]
+
+sim:
+  enable_right: null    # null → infer from H5 structure
+  enable_left: null     # null → infer from H5 structure
+  headless: false
+  set_joints: true
+  control_hz: 50
+  camera_eye: [1.97035, 0.00915, 1.58108]
+  camera_target: [0.51, 0.0, 1.23]
+  collision_tracking: true
+  desk_prim_paths: ["/World/table_left", "/World/table_right"]
+  object_replay: true   # set to true to replay object trajectories
+  object_trajectory_frame: world  # object_trajectory/*.npy already contains world-space poses
+  object_grasp_attach: false
+  object_grasp_anchor: false
+  object_initial_surface_align: false
+  object_initial_surface_prim_paths: ["/World/table_left", "/World/table_right"]
+  object_initial_surface_clearance: 0.0
+  object_disable_hand_collision: false
+  object_hand_collision_filter_prim_paths: []  # empty = auto-detect Orca hand collision prims
+  object_release_collision_delay_frames: 0  # optional delay; 0 keeps object-table/object-bowl collision active at release
+  object_free_physics_extra_frames: 0
+  object_release_container_align: false
+  object_release_container_prim_path: /World/purple_bowl
+  object_release_container_xy_offset: [0.0, 0.0]  # extra world XY offset from release hand position
+  object_cam: left      # ignored when object_trajectory_frame is world
+  object_scale: 1    # uniform mm→m scale applied to all objects
+  objects:
+    - usd_path: assets/objects/yellow_rubber_duck.obj
+      trajectory_npy: data\{manipulation_id}\object_trajectory\yellow_rubber_duck.npy
+      grasp_eef_side: right
+      grasp_eef_offset: [0.0, 0.0, 0.0] # local-frame offset (m) from palm prim to object center when grasped — needs re-tuning
+      grasp_eef_ori_flip: null         # rotation on top of palm ori: none | axis:degrees (e.g. y:-90, x:45)
+    - usd_path: assets\objects\purple_bowl.obj
+      trajectory_npy: data\{manipulation_id}\object_trajectory\purple_bowl.npy
+      grasp_eef_side: right
+      grasp_eef_offset: [0.0, 0.0, 0.0] # local-frame offset (m) from palm prim to object center when grasped — needs re-tuning
+      grasp_eef_ori_flip: null        # rotation on top of palm ori: none | axis:degrees (e.g. y:-90, x:45)
+
+vis:
+  enabled: false
+  show_eef: false
+  show_offset: true
+  video_mode: true
+
+log:
+  file_enabled: false
+  file_level: DEBUG    # level written to logs/<timestamp>.log
+  console_level: INFO  # level written to stdout
+
+seg:
+  enabled: false
+  output_dir: data/segmentation
+  save_rate: 100    # save every N frames
+  mask_png: true
+  mask_npy: false
+  rgb_png: true
+
+rec:
+  enabled: false
+  output_dir: "outputs/"
+  cameras: ["left"]     # any combination of: "viewport", "left", "right"
+  fps: 30
+  start_frame: 0
+  end_frame: null        # null = record until the end
+  resolution: [640, 480]
+  rgb_mp4: false
+  depth_npy: false
+  depth_png: false
+  eef_pos_npy: false      # save EEF image-space positions as .npy under EEF_pos/
+  eef_pos_mp4: false      # save annotated MP4 with red dot + frame/pos overlay under EEF_pos/
+
+object_trajectory:
+  enabled: false          # avoid overwriting the input object trajectories
+  output_dir: "data/"     # null = use rec.output_dir
+  start_frame: 1520
+  end_frame: 2030         # null = record until replay end

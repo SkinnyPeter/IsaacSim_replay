@@ -1,0 +1,22 @@
+id: "20250804_105719"           # recording ID to process (overridden by CLI arg if provided)
+
+output_dir: "outputs/"          # root outputs dir; script looks for <output_dir>/<id>/
+data_dir: "data/h5/"           # directory containing <id>.h5 files
+object_name: "yellow_rubber_duck"  # subdirectory under obj_center/
+
+smooth_window: 4               # gaussian sigma in frames (applied to both pos arrays)
+
+pos_threshold: 50.0            # max pixel distance EEF↔center to satisfy position condition
+
+motion_window: 60              # half-window in frames for motion measurement (computes over ±motion_window frames)
+motion_threshold: 0.2          # max difference in avg pixel speed between EEF and object center (px/frame)
+static_threshold: 0.3          # max object center pixel speed (px/frame) to classify a non-grasped frame as static
+static_motion_window: 10       # half-window in frames for object center speed used in static/moving classification
+
+max_grasp_gap: 20              # fill no-grasp gaps shorter than this (frames) before applying min_grasp_duration
+min_grasp_duration: 15         # both conditions must hold for this many consecutive frames to trigger;
+                               # drops to 0 immediately when either condition fails
+
+video:
+  enabled: true
+  fps: 30                      # output video fps
